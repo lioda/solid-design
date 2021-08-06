@@ -54,6 +54,24 @@ export class ParcelDayOfArrival {
   }
 
   transitTax(): number {
-    return this.arrivalDate.diff(this.shippingDate, 'days') * this.taxPerDay;
+    return this.countCalendarDaysFrom(this.shippingDate) * this.taxPerDay;
+  }
+
+  displayToCustomer(now: Dayjs): string {
+    const calendarDays = this.countCalendarDaysFrom(now);
+
+    if (calendarDays >= 7) {
+      return this.arrivalDate.format('dddd MMMM D').toLowerCase();
+    }
+    if (calendarDays >= 2) {
+      return `next ${this.arrivalDate.format('dddd, MMMM D').toLowerCase()}`;
+    }
+    if (calendarDays === 1) {
+      return 'tomorrow';
+    }
+    return 'today';
+  }
+  private countCalendarDaysFrom(date: Dayjs): number {
+    return this.arrivalDate.diff(date, 'days');
   }
 }
