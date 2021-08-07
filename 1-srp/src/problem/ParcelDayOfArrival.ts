@@ -53,10 +53,6 @@ export class ParcelDayOfArrival {
     return this.arrivalDate;
   }
 
-  transitTax(): number {
-    return this.countCalendarDaysFrom(this.shippingDate) * this.taxPerDay;
-  }
-
   displayToCustomer(now: Dayjs): string {
     const calendarDays = this.countCalendarDaysFrom(now);
 
@@ -73,5 +69,9 @@ export class ParcelDayOfArrival {
   }
   private countCalendarDaysFrom(date: Dayjs): number {
     return this.arrivalDate.diff(date, 'days');
+  }
+
+  transitTax(): number {
+    return this.countCalendarDaysFrom(this.shippingDate) * this.taxPerDay;
   }
 }
