@@ -33,31 +33,41 @@ describe('ParcelDayOfArrival', () => {
   });
 
   describe('transitTax', () => {
-    //TODO create builders to express more domain in tests
-    test('when transit on business days then multiply by tax', () => {
-      // BUILDER NEEDED
+    function shippingDuring({ overWeekend }: { overWeekend: boolean }): {
+      dayOfArrival: ParcelDayOfArrival;
+      countCalendarDays: number;
+    } {
       const dayOfArrival = new ParcelDayOfArrival({
-        shippingDate: wednesday1stJanuary2020,
+        shippingDate: dayjs('2021-01-13'), // wednesday
         daysOff: weekend,
         taxPerDay,
       });
-      dayOfArrival.addBusinessDays(2);
-      //
 
-      expect(dayOfArrival.transitTax()).toEqual(2 * taxPerDay);
+      let transitDays = 2;
+      if (overWeekend) {
+        transitDays += 3; // calendar days
+        dayOfArrival.addBusinessDays(3);
+      } else {
+        dayOfArrival.addBusinessDays(2);
+      }
+
+      return { dayOfArrival, countCalendarDays: transitDays };
+    }
+
+    test('when transit on business days then multiply by tax', () => {
+      const { dayOfArrival, countCalendarDays } = shippingDuring({
+        overWeekend: false,
+      });
+
+      expect(dayOfArrival.transitTax()).toEqual(countCalendarDays * taxPerDay);
     });
 
     test('when transit on weekends then count calendar days for tax', () => {
-      // BUILDER NEEDED
-      const dayOfArrival = new ParcelDayOfArrival({
-        shippingDate: wednesday1stJanuary2020,
-        daysOff: weekend,
-        taxPerDay,
+      const { dayOfArrival, countCalendarDays } = shippingDuring({
+        overWeekend: true,
       });
-      dayOfArrival.addBusinessDays(3);
-      //
 
-      expect(dayOfArrival.transitTax()).toEqual(5 * taxPerDay);
+      expect(dayOfArrival.transitTax()).toEqual(countCalendarDays * taxPerDay);
     });
   });
 
