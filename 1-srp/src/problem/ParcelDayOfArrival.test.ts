@@ -63,31 +63,26 @@ describe('ParcelDayOfArrival - Problem', () => {
       {
         now: '2020-01-01',
         arrival: '2020-01-06',
-        arrivalDate: 6,
         arrivalDay: 'monday',
       },
       {
         now: '2020-01-01',
         arrival: '2020-01-07',
-        arrivalDate: 7,
         arrivalDay: 'tuesday',
       },
       {
         now: '2020-01-06',
         arrival: '2020-01-08',
-        arrivalDate: 8,
         arrivalDay: 'wednesday',
       },
       {
         now: '2020-01-06',
         arrival: '2020-01-09',
-        arrivalDate: 9,
         arrivalDay: 'thursday',
       },
       {
         now: '2020-01-06',
         arrival: '2020-01-10',
-        arrivalDate: 10,
         arrivalDay: 'friday',
       },
     ])(
@@ -95,18 +90,14 @@ describe('ParcelDayOfArrival - Problem', () => {
       ({
         now: nowStr,
         arrival,
-        arrivalDate,
         arrivalDay,
       }: {
         now: string;
         arrival: string;
-        arrivalDate: number;
         arrivalDay: string;
       }) => {
         const { dayOfArrival, now } = dayOfArrivalFromNow(nowStr, arrival);
-        expect(dayOfArrival.displayToCustomer(now)).toBe(
-          `next ${arrivalDay}, january ${arrivalDate}`,
-        );
+        expect(dayOfArrival.displayToCustomer(now)).toBe(`next ${arrivalDay}`);
       },
     );
 

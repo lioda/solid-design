@@ -60,7 +60,7 @@ export class ParcelDayOfArrival {
       return this.arrivalDate.format('dddd MMMM D').toLowerCase();
     }
     if (calendarDays >= 2) {
-      return `next ${this.arrivalDate.format('dddd, MMMM D').toLowerCase()}`;
+      return `next ${this.arrivalDate.format('dddd').toLowerCase()}`;
     }
     if (calendarDays === 1) {
       return 'tomorrow';
