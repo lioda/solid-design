@@ -20,7 +20,7 @@ Delivery is only done during business days, so arrival date must skip week ends.
 
 This date can be displayed to customer in a friendly way and we can calculate some tax to apply on transit according to calendar days.
 
-### Issue 1: lack of cohesion
+## Issue 1: lack of cohesion
 
 A method rely on properties of its own class. When some method do not use these fields, we say there is a lack of cohesion.
 
@@ -35,7 +35,7 @@ It has nothing to do with business rules implemented in `ParcelDayOfArrival`, so
 
 In fact we face two separated concepts of our domain: _computation day of arrival_ and _display of it in a friendly way_.
 
-### Solution for Code Example
+### Solution: unit what goes together; separate what is unrelated
 
 We can extract `displayToCustomer()` in it's own concept, the `DisplayDayOfArrival` class. And we rename the method with a more appropriate name: `displayFriendly()`.
 
@@ -49,7 +49,7 @@ So during responsibility separation process, we have detected a hidden bug.
 
 Visibility change is not a problem: `countCalendarDaysFrom()` do a computation on inner data without exposing it, encapsulation is respected and it seems to express a domain behavior.
 
-### Issue 2: mixed domains
+## Issue 2: mixed domains
 
 Behaviors which belong to different domains should be separated. Doing that, we must avoid to leak information of one domain to another.
 
@@ -59,7 +59,7 @@ In the example, the `transitTax()` method appears to rely on accountability doma
 
 Some clues of this separation: the `taxPerDay` field is only used by this method (cohesion issue), the tax is computed on a transit (based on calendar days, not the business days), and tax calculation probably changes at another rythm than delivery rules (`taxPerDay` valu, doubled tax on sunday, and so on).
 
-#### Solution for Code Example
+#### Solution: separation by stakeholders
 
 By splitting the `ParcelDayOfArrival`, we can create the `TransitTax` class which only relay on an abstract `Transit` (defined by a calendar days duration).
 
