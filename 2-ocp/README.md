@@ -32,6 +32,14 @@ When a new stakeholders needs a subset of what a feature can do, OCP helps to re
 
 ### Solution: composition
 
+### Composition over inheritance
+
+Inheritance is a powerful but dangerous tool. It's easy to have large classes hierarchy that leads to Rigidity or Fragility. Some languages permit multiple inheritance which can be hard to maintain (for example, the (diamond problem)[https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem]).
+
+Composition gives a better design that gives flexibility and create a great separation of responsibilities.
+
+In our example, we have used inheritance in a very contrained case: **replacing** an existing algorithm. There are other ways to do it (with composition or Dependency Injection Principle), beware to use the correct tool in each step of design and never hesitate to refactor when needs evolve.
+
 ## Issue 3: new infrastructure
 
 What is not part of our core domain logic is in infrastructure layers. This is where communication channels are defined, by adapting our Model to technical constraints.
