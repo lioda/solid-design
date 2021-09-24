@@ -1,4 +1,4 @@
-import { Reporter } from './Reporter';
+import { ManagementReporter } from './ManagementReporter';
 import { AccountingDate, SellerStatistics } from './SellerStatistics';
 
 describe('Reporter', () => {
@@ -16,11 +16,12 @@ describe('Reporter', () => {
   }
 
   it('should generate a JSON with all data from all sellers', () => {
-    const reporter = new Reporter([
+    const reporter = new ManagementReporter([
       { seller: tom, stats: stats({ income: 75, expenses: 75 }) },
       { seller: jerry, stats: stats({ income: 125, expenses: 25 }) },
     ]);
-    expect(reporter.createReport(prices, currentMonth)).toEqual(
+
+    expect(reporter.createReport(prices, currentMonth).toJson()).toEqual(
       JSON.stringify({
         reports: [
           { name: 'Tom', incomeRatio: 0.375, expensesRatio: 0.75, profit: 0 },

@@ -1,12 +1,12 @@
-import { Reporter } from './Reporter';
+import { ManagementReporter } from './ManagementReporter';
 
-export enum Contract {
+export enum Product {
   A,
   B,
   C,
 }
 
-export type Month = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+export type Month = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 export type Year = number;
 export class AccountingDate {
   constructor(private readonly month: Month, private readonly year: Year) {}
@@ -29,9 +29,9 @@ export class AccountingDate {
   }
 }
 
-export type ContractSale = {
+export type ProductSale = {
   accountingDate: AccountingDate;
-  contract: Contract;
+  product: Product;
   count: number;
 };
 
@@ -42,27 +42,23 @@ export type Expenses = {
   accountingDate: AccountingDate;
 }[];
 
-// export interface Reporter {
-//   addReportLine(income: number, expenses: number, profit: number): void;
-// }
-
 export class SellerStatistics {
   sellerExpenses: Expenses;
-  sales: ContractSale[];
-  constructor({ expenses, sales }: { expenses: Expenses; sales: ContractSale[] }) {
+  sales: ProductSale[];
+  constructor({ expenses, sales }: { expenses: Expenses; sales: ProductSale[] }) {
     this.sellerExpenses = expenses;
     this.sales = sales;
   }
 
-  profit(prices: Record<Contract, number>, accountingDate: AccountingDate): number {
+  profit(prices: Record<Product, number>, accountingDate: AccountingDate): number {
     const totalIncome = this.income(prices, accountingDate);
     return totalIncome - this.expenses(accountingDate);
   }
 
-  income(prices: Record<Contract, number>, accountingDate: AccountingDate): number {
+  income(prices: Record<Product, number>, accountingDate: AccountingDate): number {
     return this.sales
       .filter((sale) => sale.accountingDate.equals(accountingDate))
-      .reduce((income, sale) => income + sale.count * prices[sale.contract], 0);
+      .reduce((income, sale) => income + sale.count * prices[sale.product], 0);
   }
   expenses(accountingDate: AccountingDate): number {
     return this.sellerExpenses
@@ -91,8 +87,4 @@ export class SellerStatistics {
 
     return Array.from(allAccountingDates).sort((a, b) => a.compareTo(b));
   }
-
-  // reportTo(reporter: Reporter, prices: Record<Contract, number>) {
-  //   reporter.addReportLine(this.income(prices), this.marketingExpense, this.profit(prices));
-  // }
 }

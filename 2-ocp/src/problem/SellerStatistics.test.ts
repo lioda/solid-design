@@ -1,16 +1,16 @@
-import { Reporter } from './Reporter';
-import { AccountingDate, Contract, SellerStatistics } from './SellerStatistics';
+import { ManagementReporter } from './ManagementReporter';
+import { AccountingDate, Product, SellerStatistics } from './SellerStatistics';
 
 describe('SalesStatistics', () => {
-  const contractAIncome = 100;
-  const contractBIncome = 200;
-  const contractCIncome = 400;
+  const productAIncome = 100;
+  const productBIncome = 200;
+  const productCIncome = 400;
   // const marketingExpense = 789;
 
   const prices = {
-    [Contract.A]: contractAIncome,
-    [Contract.B]: contractBIncome,
-    [Contract.C]: contractCIncome,
+    [Product.A]: productAIncome,
+    [Product.B]: productBIncome,
+    [Product.C]: productCIncome,
   };
   const expenses = {
     marketing: 250,
@@ -42,13 +42,13 @@ describe('SalesStatistics', () => {
     const stats = new SellerStatistics({
       expenses: [{ ...expenses, accountingDate: currentMonth }],
       sales: [
-        { contract: Contract.A, count: countA, accountingDate: currentMonth },
-        { contract: Contract.B, count: countB, accountingDate: currentMonth },
-        { contract: Contract.C, count: countC, accountingDate: currentMonth },
+        { product: Product.A, count: countA, accountingDate: currentMonth },
+        { product: Product.B, count: countB, accountingDate: currentMonth },
+        { product: Product.C, count: countC, accountingDate: currentMonth },
       ],
     });
 
-    const expectedIncome = countA * contractAIncome + countB * contractBIncome + countC * contractCIncome;
+    const expectedIncome = countA * productAIncome + countB * productBIncome + countC * productCIncome;
     const expectedExpenses = expenses.marketing + expenses.meals + expenses.transport;
     expect(stats.expenses(currentMonth)).toBe(expectedExpenses);
     expect(stats.income(prices, currentMonth)).toBe(expectedIncome);
@@ -64,13 +64,13 @@ describe('SalesStatistics', () => {
     const stats = new SellerStatistics({
       expenses: [{ ...expenses, accountingDate: previousMonth }],
       sales: [
-        { contract: Contract.A, count: countA, accountingDate: previousMonth },
-        { contract: Contract.B, count: countB, accountingDate: currentMonth },
-        { contract: Contract.C, count: countC, accountingDate: nextMonth },
+        { product: Product.A, count: countA, accountingDate: previousMonth },
+        { product: Product.B, count: countB, accountingDate: currentMonth },
+        { product: Product.C, count: countC, accountingDate: nextMonth },
       ],
     });
 
-    const expectedIncome = countB * contractBIncome;
+    const expectedIncome = countB * productBIncome;
     const expectedExpenses = 0;
     expect(stats.expenses(currentMonth)).toBe(expectedExpenses);
     expect(stats.income(prices, currentMonth)).toBe(expectedIncome);

@@ -1,19 +1,43 @@
-import { AccountingDate, Contract, SellerStatistics } from './SellerStatistics';
+import { AccountingDate, Product, SellerStatistics } from './SellerStatistics';
+
+export interface Report {
+  toJson(): string;
+}
+
+class ManagementReport implements Report {
+  constructor(
+    private readonly reports: {
+      name: string;
+      incomeRatio: number;
+      expensesRatio: number;
+      profit: number;
+    }[],
+    private readonly totalIncome: number,
+    private readonly totalExpenses: number,
+    private readonly totalProfit: number,
+  ) {}
+
+  toJson() {
+    return JSON.stringify(this);
+  }
+}
+
+export type Sales = { seller: Seller; stats: SellerStatistics }[];
 
 export type Seller = {
   id: string;
   name: string;
 };
 
-export class Reporter {
-  constructor(private readonly toReportSales: { seller: Seller; stats: SellerStatistics }[]) {}
+export class ManagementReporter {
+  constructor(private readonly toReportSales: Sales) {}
 
-  createReport(prices: Record<Contract, number>, accountingDate: AccountingDate): string {
+  createReport(prices: Record<Product, number>, accountingDate: AccountingDate): ManagementReport {
     let totalIncome = 0;
     let totalExpenses = 0;
     let totalProfit = 0;
     const reports = [];
-    //this.toReportSales.map((sellerSales) => {
+
     for (const sellerSales of this.toReportSales) {
       const income = sellerSales.stats.income(prices, accountingDate);
       totalIncome += income;
@@ -26,9 +50,8 @@ export class Reporter {
       reports.push(sellerReport);
     }
 
-    // });
-    const report = {
-      reports: reports.map((report) => ({
+    const report = new ManagementReport(
+      reports.map((report) => ({
         name: report.name,
         incomeRatio: report.income / totalIncome,
         expensesRatio: report.expenses / totalExpenses,
@@ -37,8 +60,8 @@ export class Reporter {
       totalIncome,
       totalExpenses,
       totalProfit,
-    };
-    return JSON.stringify(report);
+    );
+
+    return report;
   }
-  // addReportLine(income: number, expenses: number, profit: number): void {}
 }
