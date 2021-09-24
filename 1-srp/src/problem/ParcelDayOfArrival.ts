@@ -5,7 +5,7 @@ export enum CalendarDay {
   Monday,
   Tuesday,
   Wednesday,
-  Thirsday,
+  Thursday,
   Friday,
   Saturday,
 }
