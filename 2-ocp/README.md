@@ -43,30 +43,31 @@ If we modify the current `ManagementReporter` it could impact current report, ev
 
 By introducing a new `MarketingReporter` we can separate features (we respect SRP! :) ) and the system is now aware of some reporter plugin.
 
-The new `MarketingReporter` share same interface with existing `ManagementReporter` so we can apply some polymorphism on them, and each report can be sent by `ReportSaver`.
+The new `MarketingReporter` share same interface with existing `ManagementReporter` so we can apply some polymorphism on them, and each report can be injected in `ReportSavingUseCase`.  
+As an effect, we can see that `ReportSavingUseCase` obtains more focus on its responsibility (saving report).  
+OCP is often a nice complement of SRP.
 
 ## Issue 2: Extending Existing Rule
 
-> - Need to compare income with objectives to compute bonuses for sales people
-> - Subclass of Reporter, using `super.createReport()` and completing it
-
-Accountant department wants to pay our sales people, and they may have some bonuses according to their sales target.  
-Objectives are proportionnel to each seller's income generation:
+Accountant department wants to pay our sales people, and they may have some bonuses.  
+Objectives are proportionnel to each seller's profit generation:
 
 - a fail objective gives no bonus
 - a successful objective gives the exact bonus amount
 - an outstanding performance of 200% doubles the bonus amount
 
-So we need to keep current report generation (which computes each sales people's income) and add it an objective comparison.
+So we need to keep current report generation (which computes each sales people's profit) and add it an objective comparison.
 
 ### Explanation in Code Example
+
+The new `Objective` class encapsulates rules about objectives (applying SRP).
 
 Current `ManagementReporter` implementation is used by management to compare sales people, and probably to set objectives.  
 Accountant department has other needs, but based on the same calculation as manager (it would be a serious bug if both calcultations did not give the same result...)
 
 ### Solution: Extending Reporter
 
-The new class `AccountantReporter` is an extension of `ManagementReporter` which use its superclass `generateReport()` method and complete it.  
+The new class `AccountantReporter` extends `ManagementReporter`. It uses its superclass `generateReport()` method and complete it.  
 By extension we are talking about inheritance, but there are other means to do it (see the `Composition over inheritance` chapter below).
 
 It is important to follow the new `ManagementReporter` interface created during _Issue 1_.
@@ -75,12 +76,10 @@ It is important to follow the new `ManagementReporter` interface created during 
 
 In this solution, we have deliberately favored inheritance (which is a natural case of extension) over composition.
 
-Inheritance is a powerful but dangerous tool. It's easy to have large classes hierarchy that leads to Rigidity or Fragility. Some languages permit multiple inheritance which can be hard to maintain (for example, the (diamond problem)[https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem]).
+Inheritance is a powerful but dangerous tool. It's easy to have large class hierarchies that leads to Rigidity or Fragility. Also, some languages permit multiple inheritance which can be hard to maintain (for example, the [diamond problem](https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem)).
 
 Composition creates a design oriented toward flexibility and separation of responsibilities.  
 No worries, in the next issue, we will use Composition :)
-
-~~In our example, we have used inheritance in a very contrained case: **replacing** an existing algorithm. There are other ways to do it (with composition or Dependency Injection Principle), beware to use the correct tool in each step of design and never hesitate to refactor when needs evolve.~~
 
 ## Issue 3: Introducing a new use case reusing existing behaviors (relation with SRP and DRY)
 

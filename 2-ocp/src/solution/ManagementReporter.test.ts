@@ -1,7 +1,7 @@
 import { ManagementReporter } from './ManagementReporter';
 import { AccountingDate, SellerStatistics } from './SellerStatistics';
 
-describe('Reporter', () => {
+describe('ManagementReporter', () => {
   const tom = { id: 'seller01', name: 'Tom' };
   const jerry = { id: 'seller02', name: 'Jerry' };
   const currentMonth = new AccountingDate(9, 2021);
@@ -22,12 +22,15 @@ describe('Reporter', () => {
   }
 
   it('should generate a JSON with all data from all sellers', () => {
-    const reporter = new ManagementReporter([
-      { seller: tom, stats: stats({ income: 75, expenses: 75 }) },
-      { seller: jerry, stats: stats({ income: 125, expenses: 25 }) },
-    ]);
+    const reporter = new ManagementReporter(
+      [
+        { seller: tom, stats: stats({ income: 75, expenses: 75 }) },
+        { seller: jerry, stats: stats({ income: 125, expenses: 25 }) },
+      ],
+      prices,
+    );
 
-    expect(reporter.createReport(prices, currentMonth).toJson()).toEqual(
+    expect(reporter.createReport(currentMonth).toJson()).toEqual(
       JSON.stringify({
         reports: [
           { name: 'Tom', incomeRatio: 0.375, expensesRatio: 0.75, profit: 0 },

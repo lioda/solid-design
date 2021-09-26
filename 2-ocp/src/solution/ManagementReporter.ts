@@ -1,8 +1,5 @@
-import { AccountingDate, Product, SellerStatistics } from './SellerStatistics';
-
-export interface Report {
-  toJson(): string;
-}
+import { Report, Reporter, Sales } from './Reporter';
+import { AccountingDate, Product } from './SellerStatistics';
 
 export class ManagementReport implements Report {
   constructor(
@@ -22,28 +19,21 @@ export class ManagementReport implements Report {
   }
 }
 
-export type Sales = { seller: Seller; stats: SellerStatistics }[];
+export class ManagementReporter implements Reporter {
+  constructor(private readonly toReportSales: Sales, private readonly prices: Record<Product, number>) {}
 
-export type Seller = {
-  id: string;
-  name: string;
-};
-
-export class ManagementReporter {
-  constructor(private readonly toReportSales: Sales) {}
-
-  createReport(prices: Record<Product, number>, accountingDate: AccountingDate): ManagementReport {
+  createReport(accountingDate: AccountingDate): Report {
     let totalIncome = 0;
     let totalExpenses = 0;
     let totalProfit = 0;
     const reports = [];
 
     for (const sellerSales of this.toReportSales) {
-      const income = sellerSales.stats.income(prices, accountingDate);
+      const income = sellerSales.stats.income(this.prices, accountingDate);
       totalIncome += income;
       const expenses = sellerSales.stats.expenses(accountingDate);
       totalExpenses += expenses;
-      const profit = sellerSales.stats.profit(prices, accountingDate);
+      const profit = sellerSales.stats.profit(this.prices, accountingDate);
       totalProfit += profit;
 
       const sellerReport = { name: sellerSales.seller.name, income, expenses, profit };

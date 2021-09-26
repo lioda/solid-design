@@ -1,10 +1,13 @@
-import { ManagementReporter } from './ManagementReporter';
+import { AccountantReporter } from './AccountantReporter';
+import { Objective } from './Objective';
 import { AccountingDate, SellerStatistics } from './SellerStatistics';
 
-describe('Reporter', () => {
+describe('AccountantReporter', () => {
   const tom = { id: 'seller01', name: 'Tom' };
   const jerry = { id: 'seller02', name: 'Jerry' };
+  const spike = { id: 'seller03', name: 'Spike' };
   const currentMonth = new AccountingDate(9, 2021);
+  const bonus = 123;
   const prices: any = {};
 
   function stats({ income, expenses }: { income: number; expenses: number }): SellerStatistics {
@@ -21,21 +24,24 @@ describe('Reporter', () => {
     return stats;
   }
 
-  it('should generate a JSON with all data from all sellers', () => {
-    const reporter = new ManagementReporter([
-      { seller: tom, stats: stats({ income: 75, expenses: 75 }) },
-      { seller: jerry, stats: stats({ income: 125, expenses: 25 }) },
-    ]);
+  it('should generate a JSON with product report', () => {
+    const reporter = new AccountantReporter(
+      [
+        { seller: tom, stats: stats({ income: 75, expenses: 75 }) },
+        { seller: jerry, stats: stats({ income: 125, expenses: 25 }) },
+        { seller: spike, stats: stats({ income: 525, expenses: 25 }) },
+      ],
+      prices,
+      new Objective(100, bonus),
+    );
 
-    expect(reporter.createReport(prices, currentMonth).toJson()).toEqual(
+    expect(reporter.createReport(currentMonth).toJson()).toEqual(
       JSON.stringify({
         reports: [
-          { name: 'Tom', incomeRatio: 0.375, expensesRatio: 0.75, profit: 0 },
-          { name: 'Jerry', incomeRatio: 0.625, expensesRatio: 0.25, profit: 100 },
+          { name: 'Tom', bonus: 0 },
+          { name: 'Jerry', bonus },
+          { name: 'Spike', bonus: bonus * 2 },
         ],
-        totalIncome: 200,
-        totalExpenses: 100,
-        totalProfit: 100,
       }),
     );
   });
