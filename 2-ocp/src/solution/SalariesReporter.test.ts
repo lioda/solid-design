@@ -1,8 +1,8 @@
-import { AccountantReporter } from './AccountantReporter';
+import { SalariesReporter } from './SalariesReporter';
 import { Objective } from './Objective';
 import { AccountingDate, SellerStatistics } from './SellerStatistics';
 
-describe('AccountantReporter', () => {
+describe('SalariesReporter', () => {
   const tom = { id: 'seller01', name: 'Tom' };
   const jerry = { id: 'seller02', name: 'Jerry' };
   const spike = { id: 'seller03', name: 'Spike' };
@@ -25,7 +25,7 @@ describe('AccountantReporter', () => {
   }
 
   it('should generate a JSON with product report', () => {
-    const reporter = new AccountantReporter(
+    const reporter = new SalariesReporter(
       [
         { seller: tom, stats: stats({ income: 75, expenses: 75 }) },
         { seller: jerry, stats: stats({ income: 125, expenses: 25 }) },

@@ -49,7 +49,7 @@ OCP is often a nice complement of SRP.
 
 ## Issue 2: Extending Existing Rule
 
-Accountant department wants to pay our sales people, and they may have some bonuses.  
+Salaries department wants to pay our sales people, and they may have some bonuses.  
 Objectives are proportionnel to each seller's profit generation:
 
 - a fail objective gives no bonus
@@ -63,11 +63,11 @@ So we need to keep current report generation (which computes each sales people's
 The new `Objective` class encapsulates rules about objectives (applying SRP).
 
 Current `ManagementReporter` implementation is used by management to compare sales people, and probably to set objectives.  
-Accountant department has other needs, but based on the same calculation as manager (it would be a serious bug if both calcultations did not give the same result...)
+Salaries department has other needs, but based on the same calculation as manager (it would be a serious bug if both calcultations did not give the same result...)
 
 ### Solution: Extending Reporter
 
-The new class `AccountantReporter` extends `ManagementReporter`. It uses its superclass `generateReport()` method and complete it.  
+The new class `SalaryReporter` extends `ManagementReporter`. It uses its superclass `generateReport()` method and complete it.  
 By extension we are talking about inheritance, but there are other means to do it (see the `Composition over inheritance` chapter below).
 
 It is important to follow the new `ManagementReporter` interface created during _Issue 1_.
@@ -80,27 +80,6 @@ Inheritance is a powerful but dangerous tool. It's easy to have large class hier
 
 Composition creates a design oriented toward flexibility and separation of responsibilities.  
 No worries, in the next issue, we will use Composition :)
-
-## Issue 3: Introducing a new use case reusing existing behaviors (relation with SRP and DRY)
-
-When the current behavior is wrong (we made false assumptions on our domain rules), we can change (or delete it). This is not an issue with OCP as the current behavior will no longer be used.
-
-We must note a special need of modifications, when we keep a subset of current rules in addition with some new rule.
-
-### Explanation in Code Example
-
-For example, what if we need to generate an accountant report with only expenses: those from sellers and those from engineers.
-
-If we don't impact current code, we will end up by rewriting some rules. Which is bad from a DRY point of view.  
-If we impact current `ManagementReporter`, it's a violation of SRP (it implements many rules) and OCP.
-
-### Solution: separate responsibilities
-
-With SRP we already know how to tackle this issue. We must rules: computing income is a rule, computing expenses is another rule.
-
-Then we can create a new model of what is a reporter: it is an aggregate of rules coupled with a formatter.
-
-Look at the XXX file. We can see each rule isolated from another one and each reporter use a subset of these rules to build its report.
 
 ## Code modification and false assumptions
 
@@ -117,3 +96,26 @@ This is why we work with tests (preferably by using TDD or BDD methodology), and
 - if a feature is no longer used, we need to delete some part of code. SRP helps us to limit our work, and removing an isolated component should be easy.
 
 Code is a living organism which reinvent itself and adapt permanently. Don't hesitate to mutate code when a change occurs.
+
+## Issue 3: Introducing a new use case reusing existing behaviors (relation with SRP and DRY)
+
+This issue is a special case of modification: we will keep a subset of current rules in addition with some new rule.
+
+### Explanation in Code Example
+
+What if we need to generate an accountant report with only expenses? Those from sellers and those from engineers.
+
+If we don't impact current code, we will end up by rewriting some rules. Which is bad from a DRY point of view.  
+If we impact current `ManagementReporter`, it's a violation of SRP (it implements many rules) and OCP.
+
+### Solution: separate responsibilities
+
+This rewrite has a bigger impact, so we have isolated this solution in its own `composition` directory.
+
+With SRP we already know how to tackle this issue. We must separate rules: computing income is a rule, computing expenses is another rule.
+
+Then we can create a new model of what is a reporter: it is an aggregate of rules coupled with a formatter.
+
+Look at the `composition/ReporterRules` file. We have extracted all rules for Management (and Human Resources, because they only need expenses rule).  
+Now we have separated each calculation and we can compose them.  
+For example, we have rewritten `ManagementReporter` to use these rules.
