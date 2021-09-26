@@ -43,12 +43,11 @@ If we modify the current `ManagementReporter` it could impact current report, ev
 
 By introducing a new `MarketingReporter` we can separate features (we respect SRP! :) ) and the system is now aware of some reporter plugin.
 
-The new `MarketingReporter` share same interface with existing `ManagementReporter` so we can apply some polymorphism on them, and each report can be sent by `ReportSaver`.
+The new `MarketingReporter` share same interface with existing `ManagementReporter` so we can apply some polymorphism on them, and each report can be injected in `ReportSavingUseCase`.  
+As an effect, we can see that `ReportSavingUseCase` obtains more focus on its responsibility (saving report).  
+OCP is often a nice complement of SRP.
 
 ## Issue 2: Extending Existing Rule
-
-> - Need to compare income with objectives to compute bonuses for sales people
-> - Subclass of Reporter, using `super.createReport()` and completing it
 
 Accountant department wants to pay our sales people, and they may have some bonuses according to their sales target.  
 Objectives are proportionnel to each seller's income generation:

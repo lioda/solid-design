@@ -39,6 +39,10 @@ describe('SalesStatistics', () => {
     expect(stats.income(prices, currentMonth)).toBe(expectedIncome);
     expect(stats.profit(prices, currentMonth)).toBe(expectedIncome - expectedExpenses);
     expect(stats.activity()).toEqual([currentMonth]);
+
+    expect(stats.countProduct(Product.A, currentMonth)).toBe(countA);
+    expect(stats.countProduct(Product.B, currentMonth)).toBe(countB);
+    expect(stats.countProduct(Product.C, currentMonth)).toBe(countC);
   });
 
   it('should compute stats only for given accounting date', () => {
@@ -61,5 +65,9 @@ describe('SalesStatistics', () => {
     expect(stats.income(prices, currentMonth)).toBe(expectedIncome);
     expect(stats.profit(prices, currentMonth)).toBe(expectedIncome - expectedExpenses);
     expect(stats.activity()).toEqual([previousMonth, currentMonth, nextMonth]);
+
+    expect(stats.countProduct(Product.A, currentMonth)).toBe(0);
+    expect(stats.countProduct(Product.B, currentMonth)).toBe(countB);
+    expect(stats.countProduct(Product.C, currentMonth)).toBe(0);
   });
 });
